@@ -75,13 +75,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Idreesia Chargha House — Authentic Mardan BBQ & Chargha" },
+      { title: "Idreesia Chargha House — Authentic Mardan BBQ & CharghaHouse" },
       { name: "description", content: "Mardan's beloved chargha, BBQ, tikka & seekh kabab. Fresh, juicy, and affordable. Dine-in, takeaway & phone orders." },
       { name: "author", content: "Idreesia Chargha House" },
-      { property: "og:title", content: "Idreesia Chargha House — Mardan's Best Chargha & BBQ" },
-      { property: "og:description", content: "Authentic Pakistani grilled chicken, chargha and BBQ in Mardan. Order by phone or WhatsApp." },
+      { property: "og:title", content: "Idreesia Chargha House — Authentic Mardan BBQ & CharghaHouse" },
+      { property: "og:description", content: "Mardan's beloved chargha, BBQ, tikka & seekh kabab. Fresh, juicy, and affordable. Dine-in, takeaway & phone orders." },
       { property: "og:type", content: "restaurant" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Idreesia Chargha House — Authentic Mardan BBQ & CharghaHouse" },
+      { name: "twitter:description", content: "Mardan's beloved chargha, BBQ, tikka & seekh kabab. Fresh, juicy, and affordable. Dine-in, takeaway & phone orders." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4e68fb71-872e-45d3-960d-991db64d2785/id-preview-e1e18320--907f1b54-c71a-46c9-ba47-23a154efb2d9.lovable.app-1778488222935.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4e68fb71-872e-45d3-960d-991db64d2785/id-preview-e1e18320--907f1b54-c71a-46c9-ba47-23a154efb2d9.lovable.app-1778488222935.png" },
     ],
     links: [
       {
