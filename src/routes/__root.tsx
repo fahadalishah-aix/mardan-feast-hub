@@ -9,6 +9,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
+import { StickyCall } from "@/components/site/StickyCall";
 
 function NotFoundComponent() {
   return (
@@ -72,14 +75,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { title: "Idreesia Chargha House — Authentic Mardan BBQ & Chargha" },
+      { name: "description", content: "Mardan's beloved chargha, BBQ, tikka & seekh kabab. Fresh, juicy, and affordable. Dine-in, takeaway & phone orders." },
+      { name: "author", content: "Idreesia Chargha House" },
+      { property: "og:title", content: "Idreesia Chargha House — Mardan's Best Chargha & BBQ" },
+      { property: "og:description", content: "Authentic Pakistani grilled chicken, chargha and BBQ in Mardan. Order by phone or WhatsApp." },
+      { property: "og:type", content: "restaurant" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       {
@@ -113,7 +115,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-16 lg:pt-20">
+          <Outlet />
+        </main>
+        <Footer />
+        <StickyCall />
+      </div>
     </QueryClientProvider>
   );
 }
