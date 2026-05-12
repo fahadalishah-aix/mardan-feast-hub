@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Idreesia Chargha House — Mardan's Authentic Chargha & BBQ" },
       { name: "description", content: "Authentic Pakistani chargha, tikka and BBQ in Mardan. Fresh, juicy and affordable. Dine-in, takeaway and phone orders welcome." },
-      { property: "og:image", content: "/og-cover.jpg" },
+      { property: "og:image", content: hero },
     ],
   }),
   component: Home,

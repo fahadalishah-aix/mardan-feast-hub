@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -166,5 +167,3 @@
   50% { box-shadow: 0 0 0 14px oklch(0.55 0.21 30 / 0); }
 }
 .animate-ember { animation: ember-pulse 2s ease-out infinite; }
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap');
