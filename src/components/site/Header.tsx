@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
-import { RESTAURANT } from "@/lib/restaurant";
+import { useRestaurant } from "@/lib/restaurant-store";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -11,6 +11,7 @@ const NAV = [
 ] as const;
 
 export function Header() {
+  const RESTAURANT = useRestaurant();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

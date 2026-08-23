@@ -14,11 +14,15 @@ export const RESTAURANT = {
 };
 
 export type MenuItem = {
+  id: string;
   name: string;
   desc: string;
   price: number;
   image?: string;
   badge?: string;
+  category: string;
+  restaurant: string;
+  available: boolean;
 };
 
 export type MenuCategory = {

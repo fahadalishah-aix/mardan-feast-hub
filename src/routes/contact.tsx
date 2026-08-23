@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, MapPin, Clock } from "lucide-react";
-import { RESTAURANT } from "@/lib/restaurant";
+import { useRestaurant } from "@/lib/restaurant-store";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const RESTAURANT = useRestaurant();
   return (
     <div>
       <section className="bg-gradient-warm bg-noise border-b border-border">

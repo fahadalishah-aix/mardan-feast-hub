@@ -1,9 +1,11 @@
-import { MENU } from "@/lib/menu";
-import { RESTAURANT } from "@/lib/restaurant";
+import { useMenu } from "@/lib/menu-store";
+import { useRestaurant } from "@/lib/restaurant-store";
 import { Phone } from "lucide-react";
 
 export function MenuList({ compact = false }: { compact?: boolean }) {
-  const cats = compact ? MENU.slice(0, 3) : MENU;
+  const { menu } = useMenu();
+  const RESTAURANT = useRestaurant();
+  const cats = compact ? menu.slice(0, 3) : menu;
 
   return (
     <div className="space-y-20">
@@ -20,7 +22,7 @@ export function MenuList({ compact = false }: { compact?: boolean }) {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {cat.items.map((item) => (
+            {cat.items.filter((item) => item.available).map((item) => (
               <article
                 key={item.name}
                 className="group relative overflow-hidden rounded-2xl bg-card border border-border shadow-card hover-lift"

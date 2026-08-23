@@ -4,8 +4,8 @@ import hero from "@/assets/hero-chargha.jpg";
 import bbq from "@/assets/bbq-platter.jpg";
 import tikka from "@/assets/tikka.jpg";
 import chargha from "@/assets/chargha.jpg";
-import { RESTAURANT } from "@/lib/restaurant";
-import { MENU } from "@/lib/menu";
+import { useRestaurant } from "@/lib/restaurant-store";
+import { useMenu } from "@/lib/menu-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,11 +19,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { menu } = useMenu();
+  const RESTAURANT = useRestaurant();
+  const allItems = menu.flatMap((category) => category.items).filter((item) => item.available);
   const specials = [
-    { ...MENU[0].items[1], cat: "Signature" },
-    { ...MENU[2].items[0], cat: "Family" },
-    { ...MENU[1].items[2], cat: "Today" },
-  ];
+    { ...allItems[1], cat: "Signature" },
+    { ...allItems[6], cat: "Family" },
+    { ...allItems[8], cat: "Today" },
+  ].filter((item) => item.name);
 
   return (
     <div>

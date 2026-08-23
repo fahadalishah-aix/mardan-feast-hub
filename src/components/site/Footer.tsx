@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, MapPin, Phone, Clock } from "lucide-react";
-import { RESTAURANT } from "@/lib/restaurant";
+import { useRestaurant } from "@/lib/restaurant-store";
 
 export function Footer() {
+  const RESTAURANT = useRestaurant();
   return (
     <footer className="mt-24 bg-charcoal text-cream">
       <div className="container mx-auto px-5 lg:px-8 py-16 grid gap-12 md:grid-cols-4">

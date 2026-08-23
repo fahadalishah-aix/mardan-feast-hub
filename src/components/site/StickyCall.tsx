@@ -1,7 +1,8 @@
 import { Phone } from "lucide-react";
-import { RESTAURANT } from "@/lib/restaurant";
+import { useRestaurant } from "@/lib/restaurant-store";
 
 export function StickyCall() {
+  const RESTAURANT = useRestaurant();
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3">
       <a

@@ -10,6 +10,8 @@ import {
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { StickyCall } from "@/components/site/StickyCall";
+import { MenuProvider } from "@/lib/menu-store";
+import { RestaurantProvider } from "@/lib/restaurant-store";
 
 function NotFoundComponent() {
   return (
@@ -84,14 +86,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 pt-16 lg:pt-20">
-          <Outlet />
-        </main>
-        <Footer />
-        <StickyCall />
-      </div>
+      <RestaurantProvider>
+      <MenuProvider>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1 pt-16 lg:pt-20"><Outlet /></main>
+          <Footer />
+          <StickyCall />
+        </div>
+      </MenuProvider>
+      </RestaurantProvider>
     </QueryClientProvider>
   );
 }

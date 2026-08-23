@@ -1,0 +1,71 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { ArrowLeft, Check, ImagePlus, LayoutDashboard, Pencil, Plus, Search, Store, Trash2, Utensils, X } from "lucide-react";
+import { useMenu } from "@/lib/menu-store";
+import { useRestaurant } from "@/lib/restaurant-store";
+import type { MenuItem } from "@/lib/restaurant";
+
+export const Route = createFileRoute("/admin")({ component: AdminPage });
+
+type FormValues = Omit<MenuItem, "id">;
+const emptyForm: FormValues = { name: "", desc: "", price: 0, image: "", badge: "", category: "", restaurant: "Idreesia Chargha House", available: true };
+
+function AdminPage() {
+  const { menu, items, addItem, updateItem, deleteItem } = useMenu();
+  const restaurantProfile = useRestaurant();
+  const { updateRestaurant } = restaurantProfile;
+  const [profile, setProfile] = useState({ name: restaurantProfile.name, tagline: restaurantProfile.tagline, phone: restaurantProfile.phone, address: restaurantProfile.address, hours: restaurantProfile.hours });
+  const [editing, setEditing] = useState<MenuItem | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [restaurant, setRestaurant] = useState("all");
+  const [availability, setAvailability] = useState("all");
+  const categories = menu.map((item) => item.title);
+  const restaurants = [...new Set(items.map((item) => item.restaurant))];
+  const filtered = items.filter((item) => {
+    const matchesQuery = `${item.name} ${item.desc}`.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery && (category === "all" || item.category === category) && (restaurant === "all" || item.restaurant === restaurant) && (availability === "all" || (availability === "active") === item.available);
+  });
+  const active = items.filter((item) => item.available).length;
+
+  const openCreate = () => { setEditing(null); setCreating(true); };
+  const openEdit = (item: MenuItem) => { setCreating(false); setEditing(item); };
+  const closeForm = () => { setCreating(false); setEditing(null); };
+
+  return (
+    <div className="min-h-screen bg-secondary/40">
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto flex items-center justify-between gap-4 px-5 py-5 lg:px-8">
+          <div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-spice text-white"><LayoutDashboard className="h-5 w-5" /></div><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Control room</p><h1 className="font-display text-2xl font-bold">Mardan Feast Admin</h1></div></div>
+          <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-secondary"><ArrowLeft className="h-4 w-4" /> View site</Link>
+        </div>
+      </header>
+      <main className="container mx-auto space-y-8 px-5 py-8 lg:px-8 lg:py-12">
+        <section><p className="text-sm font-semibold text-primary">Good morning</p><div className="mt-1 flex flex-wrap items-end justify-between gap-4"><div><h2 className="font-display text-4xl font-black">Menu overview</h2><p className="mt-2 text-muted-foreground">Keep your live customer menu fresh and accurate.</p></div><button onClick={openCreate} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 font-semibold text-primary-foreground shadow-warm hover:brightness-110"><Plus className="h-4 w-4" /> Add food item</button></div></section>
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Stat icon={<Utensils />} label="Total items" value={items.length} tone="bg-primary" /><Stat icon={<Check />} label="Active items" value={active} tone="bg-emerald-600" /><Stat icon={<X />} label="Inactive items" value={items.length - active} tone="bg-charcoal" /><Stat icon={<Store />} label="Restaurants" value={restaurants.length} tone="bg-accent" dark />
+        </section>
+        <section className="rounded-2xl border border-border bg-card p-5 shadow-card"><div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-primary"><Store className="h-5 w-5" /></div><div><h2 className="font-display text-2xl font-bold">Restaurant profile</h2><p className="text-sm text-muted-foreground">These details appear across the customer website.</p></div></div><div className="mt-5 grid gap-4 md:grid-cols-2"><Field label="Restaurant name" value={profile.name} onChange={(value) => setProfile({ ...profile, name: value })} required /><Field label="Tagline" value={profile.tagline} onChange={(value) => setProfile({ ...profile, tagline: value })} /><Field label="Phone" value={profile.phone} onChange={(value) => setProfile({ ...profile, phone: value })} /><Field label="Opening hours" value={profile.hours} onChange={(value) => setProfile({ ...profile, hours: value })} /><Field label="Address" value={profile.address} onChange={(value) => setProfile({ ...profile, address: value })} /><div className="flex items-end"><button onClick={() => { const digits = profile.phone.replace(/[^\d+]/g, ""); updateRestaurant({ ...profile, phoneHref: `tel:${digits}`, whatsappHref: `https://wa.me/${digits.replace("+", "")}` }); }} className="rounded-full bg-charcoal px-5 py-2.5 font-semibold text-cream hover:bg-primary">Save profile</button></div></div></section>
+        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+          <div className="border-b border-border p-5"><div className="flex flex-wrap items-center justify-between gap-4"><div><h2 className="font-display text-2xl font-bold">Food catalogue</h2><p className="text-sm text-muted-foreground">{filtered.length} of {items.length} items shown</p></div><label className="relative w-full sm:w-72"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search items" className="h-10 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring" /></label></div><div className="mt-4 grid gap-3 sm:grid-cols-3"><Filter value={category} onChange={setCategory} options={["all", ...categories]} label="Category" /><Filter value={restaurant} onChange={setRestaurant} options={["all", ...restaurants]} label="Restaurant" /><Filter value={availability} onChange={setAvailability} options={["all", "active", "inactive"]} label="Availability" /></div></div>
+          <div className="divide-y divide-border">{filtered.map((item) => <ItemRow key={item.id} item={item} onEdit={openEdit} onDelete={(id) => { if (window.confirm("Delete this food item from the live menu?")) deleteItem(id); }} />)}{filtered.length === 0 && <div className="p-12 text-center text-muted-foreground">No food items match these filters.</div>}</div>
+        </section>
+      </main>
+      {(creating || editing) && <ItemForm item={editing} categories={categories} onClose={closeForm} onCreate={addItem} onUpdate={updateItem} />}
+    </div>
+  );
+}
+
+function Stat({ icon, label, value, tone, dark = false }: { icon: React.ReactNode; label: string; value: number; tone: string; dark?: boolean }) { return <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-card"><div className={`grid h-11 w-11 place-items-center rounded-xl ${tone} ${dark ? "text-charcoal" : "text-white"}`}>{icon}</div><div><p className="text-sm text-muted-foreground">{label}</p><p className="font-display text-3xl font-black">{value}</p></div></div>; }
+function Filter({ value, onChange, options, label }: { value: string; onChange: (value: string) => void; options: string[]; label: string }) { return <label className="text-xs font-semibold text-muted-foreground"><span className="mb-1 block">{label}</span><select value={value} onChange={(event) => onChange(event.target.value)} className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm font-normal text-foreground outline-none focus:ring-2 focus:ring-ring">{options.map((option) => <option key={option} value={option}>{option === "all" ? `All ${label.toLowerCase()}s` : option}</option>)}</select></label>; }
+function ItemRow({ item, onEdit, onDelete }: { item: MenuItem; onEdit: (item: MenuItem) => void; onDelete: (id: string) => void }) { return <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center"><div className="h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted">{item.image ? <img src={item.image} alt="" className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-muted-foreground"><ImagePlus /></div>}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-display text-xl font-bold">{item.name}</h3><span className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${item.available ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}`}>{item.available ? "Active" : "Inactive"}</span></div><p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{item.desc}</p><div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground"><span>{item.category}</span><span>{item.restaurant}</span><span className="font-bold text-primary">Rs {item.price.toLocaleString()}</span></div></div><div className="flex gap-2"><button title="Edit item" onClick={() => onEdit(item)} className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-secondary"><Pencil className="h-4 w-4" /> Edit</button><button title="Delete item" onClick={() => onDelete(item.id)} className="grid h-9 w-9 place-items-center rounded-lg border border-destructive/30 text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button></div></div>; }
+
+function ItemForm({ item, categories, onClose, onCreate, onUpdate }: { item: MenuItem | null; categories: string[]; onClose: () => void; onCreate: (item: FormValues) => void; onUpdate: (id: string, item: FormValues) => void }) {
+  const [values, setValues] = useState<FormValues>(item ? { ...item } : { ...emptyForm, category: categories[0] ?? "" });
+  const set = (key: keyof FormValues, value: string | number | boolean) => setValues((current) => ({ ...current, [key]: value }));
+  const imageChange = (event: ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => set("image", String(reader.result)); reader.readAsDataURL(file); };
+  const submit = (event: FormEvent) => { event.preventDefault(); if (!values.name.trim() || !values.category || values.price < 0) return; item ? onUpdate(item.id, values) : onCreate(values); onClose(); };
+  return <div className="fixed inset-0 z-50 overflow-y-auto bg-charcoal/60 p-4 backdrop-blur-sm"><div className="mx-auto my-8 max-w-2xl rounded-2xl bg-card shadow-warm"><div className="flex items-center justify-between border-b border-border p-5"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Menu editor</p><h2 className="font-display text-2xl font-bold">{item ? "Edit food item" : "Add food item"}</h2></div><button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-secondary" title="Close"><X /></button></div><form onSubmit={submit} className="grid gap-5 p-5 sm:grid-cols-2"><label className="sm:col-span-2 text-sm font-semibold">Photo<input type="file" accept="image/*" onChange={imageChange} className="mt-2 block w-full text-sm" />{values.image && <img src={values.image} alt="Preview" className="mt-3 h-32 w-40 rounded-xl object-cover" />}</label><Field label="Name" value={values.name} onChange={(value) => set("name", value)} required /><Field label="Price (Rs)" type="number" value={String(values.price)} onChange={(value) => set("price", Number(value))} required /><Field label="Description" value={values.desc} onChange={(value) => set("desc", value)} /><Field label="Restaurant" value={values.restaurant} onChange={(value) => set("restaurant", value)} required /><label className="text-sm font-semibold">Category<select value={values.category} onChange={(event) => set("category", event.target.value)} className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 font-normal outline-none focus:ring-2 focus:ring-ring">{categories.map((option) => <option key={option}>{option}</option>)}<option value="Other">Other</option></select></label><Field label="Badge (optional)" value={values.badge ?? ""} onChange={(value) => set("badge", value)} /><label className="flex items-center gap-3 self-end text-sm font-semibold"><input type="checkbox" checked={values.available} onChange={(event) => set("available", event.target.checked)} className="h-4 w-4 accent-primary" /> Available on customer website</label><div className="flex justify-end gap-3 border-t border-border pt-5 sm:col-span-2"><button type="button" onClick={onClose} className="rounded-full border border-border px-5 py-2.5 font-semibold hover:bg-secondary">Cancel</button><button className="rounded-full bg-primary px-5 py-2.5 font-semibold text-primary-foreground hover:brightness-110">{item ? "Save changes" : "Add item"}</button></div></form></div></div>;
+}
+function Field({ label, value, onChange, type = "text", required = false }: { label: string; value: string; onChange: (value: string) => void; type?: string; required?: boolean }) { return <label className="text-sm font-semibold">{label}<input type={type} required={required} value={value} onChange={(event) => onChange(event.target.value)} className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 font-normal outline-none focus:ring-2 focus:ring-ring" /></label>; }

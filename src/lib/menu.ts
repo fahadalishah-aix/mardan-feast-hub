@@ -60,3 +60,14 @@ export const MENU: MenuCategory[] = [
     ],
   },
 ];
+
+export const DEFAULT_MENU: MenuCategory[] = MENU.map((category) => ({
+  ...category,
+  items: category.items.map((item, index) => ({
+    ...item,
+    id: `${category.id}-${index + 1}`,
+    category: category.title,
+    restaurant: "Idreesia Chargha House",
+    available: true,
+  })),
+}));
